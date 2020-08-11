@@ -1,0 +1,955 @@
+-----------------------------------------------Pure functions--------------------------------------------------------------------
+ 1.Pure functions are functions that accept an input and returns a value without modifying any data outside its scope(Side Effects).
+   Its output or return value must depend on the input/arguments and pure functions must return a value.
+ 
+ 2.A pure function does not change the outside state or side effects.
+   It doesnot mean it does not have the access to the outside state.
+
+------------------------------------------------------Let vs Var vs Const-------------------------------------------------------
+
+* let,const - block scoped.
+  var - function scoped.
+
+* let -   when you want a variable in a specific scope or block and you might want it to reassign.
+  cosnt - a variable that  cannot be reassigned.The value assigned has nothing to do with const keyword.
+  var -   want variable all over the fucntion and want we can do declaration again won't throw an error. will point to the initial 
+		declaration.
+* we should not use declaration with is the scope we want for a variable.
+* Let is the new var-- this statement is not at all good as let has it's own restriction and can cause issues. 
+  like using let vaiables inside try,catch block when we want the variable to be used in all over the fucniton. 
+  
+  Example-- If let is the new var(contradiction)... here we want a variable data which we want to use in the function block
+
+	fucniton foo(){
+		let data; // Solution 1
+		try{
+			var data = api(); //Solution 2 . treat this line as it is not present if you didn't read solution 2 statement below.  
+			let data = api() ;    
+		}
+		catch(err){}
+		
+		// after 10 lines we again want to access the data... 
+		
+		data.someTask();  //Error data is not defined at foo; we cannot access as data belongs to try block.	
+	}
+	Solution 1 - declare data outside try block. 
+	Solution 2 - use var. it is a good practice to declare and assign the value as close as possible.makes more readability.
+	
+****so use the declaration as it is needed eveyone has it's own set of importance.
+
+
+-------------------------------------------	CONST keyword--------------------------------------------------------------------
+	const arr= [1,2,3,4,5,6];
+	arr =null;      //not allowed if we want to empty this array; Buttt
+	arr.length =0 ; // allowed ;
+	arr[0]=10;      // allowed ;
+	arr[3]= 20;     // allowed ;	
+	and we have changed the value inside the array an that is allowed with cosnt declaration but 
+	
+	const arr =1 ;
+	arr =2 ; // not allowed immutable value.
+
+***	So don't relate cosnt with value;
+	It simply means a variable that cannot be reassigned. Yes the value assigned is also immutable; 
+	But what happened in array case is just that arr variable is assigned an array and that arr will be an array always and it's 
+	index values are mutable but it will be an array type always whether empty or any n no. of values.
+	
+***We can make the any array values immutable by using  Object.freeze() function; 
+
+		const arr = Object.freeze([1,2,3,4,5,6,7]);
+		Now we cannot change the indexes values also;
+		
+		arr[0]=10; //no change in the arr;
+		arr[4]=10; //no change in the arr;
+	
+	Now the values inside the array is also immutable.
+	
+---------------------------------------------For in/of loops---------------------------------------------------------------
+* for in loop iterate over properties in object and in array over index and returns property names.
+* for of loop iterate over values of an array and return the values whereas doesnot iterate over object property values.
+
+ 
+foreach vs map()-->
+1. Map and foreach takes a callback function.
+2. Map returns a new array and foreach returns undefined.
+3. Map can be chained whereas foreach can't be.
+4. Map returns an array of same size.
+
+
+--------------------------------------------------Gathering or Rest vs spread operator------------------------------------------
+
+1. Gathering and spread have the same operator "...variable_name".
+                
+   			
+2. function foo(...args){ some operation with args now..};    //Gathering 
+   var arr = [1,2,4,5];
+    
+   foo(...arr);  // spreading 
+   
+3. So in the above example how can we conclude everytime that which one is gathering operator and whicch one is spread.
+	simple --> remember when we define a parameter that act as a gathering or rest operator and 
+			   when we pass argumennts for that parameter that is an spread operator.
+
+	ex- 1. var a =10;          a is parameter or assignment context and rhs is value context.
+	
+	    2. function foo(a){};  a is a parameter or assignment context. 
+	       
+		   foo(10);            10 is the argument or value context.
+		
+		3. function foo(...args){}  ...args is a parameter or assignment context and hence it is a gathering or rest operator.
+			
+		   var arr = [1,2,4,5,6];
+		   foo(...arr);             ...arr is an argument passed or value context and hence it is a spread operator. 
+-----------------------------------------------------------Destructuring---------------------------------------------------------
+
+4. Examples of destructuring 
+		i)  function foo(){
+				return [1,2,3,4,5];
+			};
+
+			var o ={};
+			[o.a,o.b,o.c=9,o.d,o.e]=foo()||[];
+			console.log(o);
+			
+	   ii)  function foo(){
+			return [1,2,3,4,5];
+			};
+
+			var a,b,c,d,e;
+			[a,b,c=9,d,e]=foo()||[];
+			console.log(a,b,c,d,e);  // 1,2,3,4,5
+	   
+      iii)  DUMPING VARIABLES-- 
+			var arr = [1,2,3,4,5]; 
+			[,,...arr]  =  [0, ...arr , 6]
+			gathering         spreading
+			 
+			arr = [2,3,4,5,6];
+	   
+	   iV)  nested array destructuring
+			
+			function foo(){
+			return [1,2,3,[4,5,6]];
+			};
+			
+			var a,b,c,args;
+			[a,b,c,...args] = foo()||[];
+			
+		//  args will collect all the values present after third element in the returned array.In this case it is an array.
+	   //	So, args will be an array having elements [4,5,6]. we can destructure args as done below-:
+			
+			function foo(){
+			return [1,2,3,[4,5,6]];
+			};
+			var a,b,c,d,e,f;
+			[a,b,c,[d,e,f]] = foo()||[];
+			
+			So destructuring of an array is done in the same way as the array is declared.
+			[a,b,c,[d,,e,f]]===[1,2,3,[4,5,6]]
+			
+		v)  doing multiple destructuring.
+			var arr = [1,2,3,[4,5,6]];
+			
+			var a,b,c,d,e,f,args;
+			
+			[,,,[d,e,f]]=[a,b,c,...args]=arr;    // a=1,b=2,c=3,d=4,e=5,f=6, args=[4,5,6];
+			
+		vi) var arr = [1,2,3];
+			
+			var a,b;      		
+			
+			var x = var[a,b]= arr; //NOT valid, so the declaration of a, b is before the assignment in next step;
+			
+//valid	    var x = [a,b] = arr; here brackett a,b =>[a,b] does not implies that it is an array or sub array of array.
+								 it is just a pattern to breakdown an array(destructuring).
+								 The destructuring assignment[a,b] here, returns the whole array.
+								 It's upto us what we want to capture out of the array that we are destructuring.
+								 But destructuring assignment of an array will return the whole array.
+			
+			var[a,b]= arr ;     The destructuring assignment is not creating a new sub array out of arr. It is just breaking 
+								down the arr. and assigning the values according to the pattern based on the index.
+ 			
+			x = [1,2,3]	Why ?   The destructuring assignment[a,b] here, returns the whole array;
+
+			var[a,b]=arr;    	var[] on LHS is an array pattern declaration.
+			
+---------------------------------------------------OBJECT DESTRUCTURING----------------------------------------------------------
+
+
+   i)		var{}=  object; var{}  on LHS is an object pattern declaration
+			
+			Examples - 
+		1	function foo (){
+			    return {a:1,b:2,c:3}
+			};
+			var{a,b,c}= foo();
+			
+		2   function foo (){
+				return {a:1,b:2,c:3}
+			};
+			
+			var{a,b:x , c}= foo(); //here first the value is assigned to b and then passed to the target x.	
+
+		3.  function foo(){
+				return {a:1,b:2,c:3}
+			}
+			
+			var a,b,c ;                     
+			
+			{a,b,c}= foo();     //    This is an illegal syntax to start a statement with curly braces.It will be considered as 
+									  a block statement rather than object pattern and solution to it is to wrap it with a 
+									  pair of paranthesis. square bracketts are specifically for array so it doesnot create 
+									  ambiguity.
+			
+			({a,b,c}=foo();)      // 	  Solution or 			
+			var {a,b,c} = foo();  //  if we use declarator just at the parameter or assignment place it will solve this. 
+						
+	ii) We can do object or array destructuring in side function's parameter-:
+		
+	1.	function foo([a,b,c]=[]){}
+		
+		foo([1,2,3]) 
+		
+		if we will do foo(1,2,3) => then the assignment will be like a=1[0], b=1[1],c =1[2]; 
+	
+	2. function foo({a,b,c}={}){}
+	    foo({a:1,b:2,c:3}); 
+	
+	3. function foo({a,b=10,c}={}){}
+	    foo({a:1,c:3});
+		
+	4. function foo({a,b=20,c}={}){}
+	    foo({c:3,a:1});          
+	
+----------------------------------------------Concise Property & functions------------------------------------------------------
+
+
+Definition -See Example first then read defintion.
+
+
+var a =10;
+var b =20;
+var c =30;
+
+var o = {
+	a : a,    
+	b : b,
+	c : c
+}
+
+// Here property name and the variable name from which the value is coming is same then we can do it like
+
+var o = {
+	a,
+	b,
+	c
+}
+
+Definition
+In an object if it's property name and the variable name from which the value is coming is same then, we can write it only once.
+
+Concise Function
+var o = {
+	a,
+	b(){},
+	c
+}
+
+ Computed Property 
+
+var a=10;
+var b =20;
+var c ="hello";
+
+var o = {
+	a,
+	b,
+   [c]:20   //Computed Property.
+}
+console.log(o.hello) //20;
+------------------------------------------------------------------------------------------------------------------------------------
+Conversions in js https://www.w3schools.com/js/js_type_conversion.asp
+The Data Type of typeof?
+The typeof operator is not a variable. It is an operator. Operators ( + - * / ) do not have any data type.
+But, the typeof operator always returns a string (containing the type of the operand).
+
+Data Types--> number ,string, boolean,object ,null, undefined
+
+The data type of an undefined variable is undefined *.
+The data type of NaN is number.
+NaN==undefined // true  values are same
+NaN===undefined // false data type is different.
+
+The data type of an array is object.
+The data type of a date is object.
+The data type of null is object.
+The data type of a variable that has not been assigned a value is also undefined *.
+--------------------------------------------------------------------------------------------------------------------------------
+undeclared vs undefined
+
+undeclared variable or function- we dont have a reference for a that in any scope is known as undeclared.
+
+undefined is a value that injects where there is declaration but not value assignment
+Scope declaration happens at complation time.
+Scope-->Scope is declared at the compilation time and it regesters  declared variables and function inside it. Now, at the time of assignment operation i.e. at execution time, the scope returns the reference of the declared variables and functions respective to the scope it is defined in so that assignment operation can be done.
+or simply scope sets/defines the freedom of accessibility  of a declared variable or function depending on the scope it is defined.
+
+***in non strict mode--> the lhs unregestered refernces at any scope are created at the golbal scope whereas rhs undeclared ref i.e. func() calls results in refernce error.
+func(){foo = 1}; --> foo created at global scope
+but -->calling  func1(); in global scope that is not declared in the global scope will cause reference error because there is no identifier func1 that is declared in any scope and is accessible to the current line of code
+(case of global scope or some unaccessible scope).
+
+***in strict mode --> both the cases result in ref error...
+
+
+let binds to th block scope and implements the principle of least discloure putting variable to as close as to be used and as far down as is necessary
+
+Function declarations are declaration that implies the values comes along with it.
+Variable declaration, the value is left as executable code so it doesn't get hoisted the value.
+ 
+
+
+------------------------------------------------------SCOPE/This Binding------------------------------------------------------------------------------------------------  
+
+
+1. undeclared vs undefined
+2. undeclared variable or function- we dont have a reference for a that in any scope is known as undeclared.
+3. undefined is a value that injects where there is declaration but not value assignment
+4. Scope declaration happens at complation time.
+5. Scope-->Scope is declared at the compilation time and it regesters  declared variables and function inside it. 
+   Now, at the time of assignment operation i.e. at execution time, the scope returns the reference of the declared variables 
+   and functions respective to the scope it is defined in so that assignment operation can be done.
+   or simply scope sets/defines the freedom of accessibility  of a declared variable or function depending on the scope it is defined.
+6. ***in non strict mode--> the lhs unregestered refernces at any scope are created at the golbal scope whereas rhs undeclared ref i.e. func() calls results in refernce error.
+   
+   func(){foo = 1}; --> foo created at global scope
+   but -->calling  func1(); in global scope that is not declared in the global scope will cause reference error because there is no identifier func1 that is declared in any scope and is accessible to the current line of code
+   (case of global scope or some unaccessible scope).
+7. ***in strict mode --> both the cases result in ref error...
+8. Let binds to th block scope and implements the principle of least discloure putting variable assignment as close as to be declaration 
+   used and as far down as is necessary.
+9. Function declarations are declaration that implies the values comes along with it.
+10.Variable declaration, the value is left as executable code so it doesn't get hoisted the value.
+
+Q. Lexical Scope?
+1. Lex means the parsing stage called lexing that occur in the compiler when it is parsing through the code. 
+
+2. Lexical scope means the compile time scope.At the time when the code is written and that code then get compile,
+   the decision for how all the scoping are going to occur were made at that time.
+   
+
+Q. WHAT IS THIS' ? **this ref to an object(Any doubt refer to the video)
+Every function while executing, has a reference to it's current execution context, called this.
+Execution Context --> How the function is called or where the function is called or from which execution context it is called, when it is called.
+this holds the ref to the execution context.
+
+this binding rules order and findnig the this refernce--> check the site of call of the function.Precedency in this binding 
+		check for new keyword-->explicit binding-->implicit binding--->default  
+
+Q. 	What happen when we do a constructor call ?
+A. 	1. a brand new empty obj created
+	2. obj is linked to other obj
+	3. obj is bound as the this keyword
+	4. If nothing is in returned of that constructor call then implicitly a return this statement is add. 
+
+Q1. Was the func called with `new` ?
+a-- use that object. new keyword overrides the other 3 rules acc to precedent of the rules.
+
+Q2  was the func called with call or apply ?
+a- use that object (explicit binding)
+
+Q3 was the function called via a containing /owning object?
+a--(implicit binding)
+
+Q4 default - global object {except strict mode}?
+
+
+Arrow function and THIS' binding ?
+Arrow functions does not remember it's own "THIS" meaning the object that called or invoked the arrow fucntion.
+So it goes one up in the lexical scope and finds the next "THIS"
+i.e. the "object" that invokes a function which then invokes the arrow function and points this to that "object". 
+ 
+ Step 1 :obj1.foo1 invokes --> obj.foo() 
+ Step 2 :and then obj.foo() invokes the --> arrow function.
+ 
+ and then "this" on line 386 does not points to obj as arrow function does not remember it's own this and then 
+ it goes up one in the lexical scope and finds the next this.
+
+ 
+ Representation of above 2 steps --:
+	 
+	 var obj={
+			data :10,
+			foo: ()=>{
+				console.log(this);
+			}         ↑
+		}             ↑   step 2 
+	 var obj1={       ↑
+			foo1 : obj.foo()
+		}    ↑
+			 ↑     step 1 
+obj1.foo1; --^
+
+Important Point-:
+(CASE 1 of exercise)
+If "this" in next one up in the lexical scope points to nothing then this will always be window global object.
+like arrow function is called by an "object" directly in the global scope then it points to window global object.
+
+Exercise --: THink what this will point to and then match with the o/p.
+----------
+CASE 1-:
+
+var obj = {
+	data: 10,
+	foo : ()=>{
+	cosnole.log(this);   // EXPECTED O/P - 'THIS' should've pointed to obj. As obj is the immediate 'THIS' 
+							to arrow function. So it does not remember it's immediate THIS'
+							and it goes one up and sets this to window object. 
+ 	}                    // Actual   O/P - this points to window object.
+}
+obj.foo();
+
+-----------
+CASE 2 -:
+
+var obj = {
+	data :10 ,
+	foo : function (){
+	setTimeout(()=>{console.log(this)},3000);  // Expected o/p-- this should point to the window object.
+											  //Actual o/p-- this points to the obj. 
+											 //As it does not hold the context of it's own "this" i.e. 
+												window object which invoked the arrow function.
+	}
+} 
+ obj.foo();     
+----------- 
+CASE 3 -: 
+
+var obj={
+	data :10,
+	foo: ()=>{
+		console.log(this);
+	}
+}								//Expected o/p-- this should point to the obj1.
+							   //Actual o/p-- this points to the window object. 
+							     As it does not hold the context of it's own "this" i.e. window object
+ 
+var obj1={
+	foo1 : obj.foo     -->  this line is reference to ()=>{console.log(this);}		
+} 
+obj1.foo1();   
+
+-----------
+CASE 4 -: 
+
+var obj={
+	data :10,
+	foo: ()=>{
+		console.log(this);
+	}
+}									//Expected o/p-- this should point to the obj.
+									//Actual o/p-- this points to the window. 
+									As it does not hold the context of it's own "this" i.e. obj object
+ 
+var obj1={
+	foo1 : obj.foo()      foo1 is not a function property now, here we invoked obj.foo() using obj1.foo1;, 
+	}				      this got in the arrow function and now "this" points to obj in actual but arrow function
+					      does not remember it's own this and hence "this" here points to the obj1, one up in the lexical scope;
+
+
+obj1.foo1;   
+
+
+---------------------------------------------------------CLOSURES---------------------------------------------------------------------------------------------
+
+Definition 1
+Closure is when a function "remembers" 
+its lexical scope even when the function
+is executed outside that lexical scope.
+It comes from lambda calculus.
+
+Definition 2
+When inside a fucntion's scope there is a declaration of another fucntion that inner fucntion is what is called as a closure. 
+The inner function has access to it's own scope,outer function's scope variables and parameters, and global scope.
+or
+A closure is when a function delclared inside the scope of another function then that inner function has the access to outer fucntions scope variables and
+parameters.
+
+Example 1- function foo(){
+			var bar = "baz";
+				
+			fucntion baz(){
+					console.log(bar);
+			}
+				bam(baz)
+			}
+			
+			
+			fucntion bam (baz){
+				baz(); -->this still remembers the bar variable and well outside it's scope i.e. scope of foo; It's a reference not a copy; 
+			}
+
+			foo();
+			
+			function foo(){
+			var bar = "baz";
+			fucntion baz(){
+					console.log(bar);
+				}
+			}
+			foo();
+--So, here when we execute foo() function it creates a  scope object. Now here we have a reference to this scope object 
+  via a closure(i.e a function inside a function "baz()") even after foo has finished execution like here we are accessing bar in baz(). 
+  So, this scope object is not garbage collected after foo() execution has finished. 
+  Even now the inner function is linked to scope object and we can access the "bar" variable inside baz();
+  
+			function foo(){
+			var bar = "baz";
+				
+			return	fucntion baz(){
+					console.log(bar);
+				}
+			}
+			var newbaz = foo(); 						inside-->	newbaz = fucntion baz(){
+																		console.log(bar);
+																	 } 
+			newbaz(); //"baz"
+			
+Q. how long does the scope stays around?
+A. A Closure is a kind of reference to a hidden scope object. So as long as a function has a closure over the scope that scope is goning to stay around. 
+	As soon as closure goes away that scope is garbage collected.
+	
+Q. Why doesnot the callback inside the loop  behaved as expected?
+A. new variable was not created per iteration. The issue was solved by IIFE and using let in place of var.
+	Problem
+		for(var i=0;i<=5;i++)
+		{                                                        
+			setTimeout(fucntion(){console.log("i :"+ i)},i*1000);
+		}                                                        
+	                                                           	       o/p--> i: 6 i: 6 i: 6 i: 6 i: 6 i: 6                  
+		IIFE solution this will create new scope gfor every iteration and hence new variable.
+		
+		for(var i=0;i<=5;i++)
+		{                                                            
+			(function(i){                                            
+				setTimeout(fucntion(){console.log("i :"+ i)},i*1000);
+			})(i);                                                   
+		}                                                              o/p--> i:0 i: 1 i: 2 i: 3 i: 4 i: 5 i: 6       
+		or 
+		
+		LET keyword let also create a new scope and hence pass new i variable on every iteration.
+		for(let i=0;i<=5;i++)                                    
+		{                                                        
+			setTimeout(fucntion(){console.log("i :"+ i)},i*1000);
+		}                                                              o/p--> i:0 i: 1 i: 2 i: 3 i: 4 i: 5 i: 6
+		or	
+		
+		for(var i=0;i<=5;i++)                                    
+		{	let j = i; // using let variable and initialization on every iteration. let creates a new scope on every iteration.
+			setTimeout(fucntion(){console.log("i :"+ j)},j*1000);
+		}                                                              o/p--> i:0 i: 1 i: 2 i: 3 i: 4 i: 5 i: 6
+
+
+---------------------------------------------------Module Pattern-----------------------------------------------------------------------
+
+Module pattern has 2 characteristics -->
+1. There must be an outer enclosing function like IIFE, we have a foo pointing to it, which will be a  public api 
+2. From inside of that function it must return one or more inner function.
+
+Benefits--> Principle of least exposure is achieved. Hiding stuffs.
+8. Also this a1.__proto__ === Foo.prototype; 
+
+9. So this a1.__proto__  links or points to the same Foo.prototype object and returns the details about it.  
+   
+   oR dunder proto is just a public link to the internal [[Prototype]] linkage.
+Diagram refer to E:\karan\JavaScript\Prototype chaining 
+
+Benefits of Prototype Linkage
+  
+1. we have the ability to delegagte to a different object to handle a method call or property reference.
+2. Avoid shadowing i.e. naming properties with same name. this leads to crappy syntax when working with prototypes.
+
+eg-->   
+		----Crappy Syntax ----
+		function Foo(who){
+			this.me= who;
+		}
+		/Foo.prototype.identify = function(){
+		 return "I am " + this.me;
+		}
+		var a1 =new Foo("a1");         //constructor call site.
+		
+		//This will lead to shadowing and if we want to access the prototype.identify we will have to do the syntax below and bind the this to it.
+		
+		/a1.identify = function(){
+		alert("Hello " +Foo.prototype.identify.call(this) +".") the crappy syntax if we add a property on a1 with same name as of one on the prototype object.
+		};
+		a1.identify(); 
+		------------------------------------------------------------------------------------------------------	
+		----Super Unicorn syntax----
+		
+		function Foo(who){
+			this.me= who;
+		}
+		
+		Foo.prototype.identify = function(){
+		 return "I am " + this.me;
+		}
+		var a1 =new Foo("a1");
+		
+		// so by naming the property with different name we can make our code work super fine.
+		
+		a1.identify1 = function(){
+		alert("Hello " +this.identify() +".") //no shadowing going on here.. simple clean code.
+		};
+		
+		a1.identify1();
+
+		so "this" + prototype combined will tell --> "this" will tell which building or (object) to reference and prototype or the linkage will tell which floor 
+		or the prototype object to go.
+
+
+Example 2 -->function Foo(who){
+				this.me= who;
+			}
+			Foo.prototype.identify=function(){
+				return("i am "+ this.me);
+			}
+			Foo.prototype.me= "karn";
+
+			function Bar (who){
+				Foo.call(this,who)
+			}
+
+			Bar.prototype = Object.create(Foo.prototype);
+			Bar.prototype.speak = function(){
+				document.write("Hello "+ this.identify() +".");
+			} 
+
+			var b1 = new Bar("b1"); // sets a "me" property on b1.
+			b1.speak();
+
+----------------------------------------------------------OLOO Pattern----------------------------------------------------------------
+
+object b1 ---> object Bar ---> object Foo;  prototype Linkage direction.
+No class, no constructor call, direct object delegation. CLeaner code and same optimization.
+
+Object.create() polyfill is like 
+
+Object.create = function(o){
+		function F(){};
+		F.prototype = o ;
+		return new F();
+
+}
+var Foo = {
+	init: function(who){
+		  this.me=who;
+		  },
+	identify: function(){
+		return("I am "+this.me);
+	}	  
+}
+
+var Bar = Object.create(Foo);   //this utility does first 2 steps of the constructor call. create new object,              [[P]]
+								  create a [[Prototype]] link to the object passed inside create method.           Bar obj ----> Foo obj 
+Bar.speak = function(){
+	document.write("hello ", this.identify() + ".")
+}
+
+var b1 = Object.create(Bar);
+b1.init("b1");
+b1.speak();
+
+Question . How can we find out where and object's [[Prototype]] points to ? (3 ways)
+
+Ans -> object.__proto__ , object.getprototypeof(object name) , object.constructor.prototype.
+
+Q. JavaScript prototype chain vs traditional/classical inheritance?
+A. In prototype chain link are created.In traditional/classical inheritance copies are created.
+
+Q. What does behaviour delegation means? How does it descibes object linking? 
+A. It means object delegagtes up the prototype chain to another object,if an object doesnot handle a method it moves up the prototype chain until it finds the property on other object.
+
+Q. why is behaviour delegation as a design pattern helpful? what are tradeoffs?
+A. *WIth delegation,we are embracing  the fact that all objects continue to exist and they are dynamically and changing. And that linkage that occurs is a dynamical linkage at runtime.
+   *With classes , they're sort if a snapshot copy that occurs. so once we made the copy then if we change the parent class in someway it's not affecting the child.
+   *But with JS we are embracing the delegation design pattern and we embrace the idea that foo can change duirng the runtime and bar automatically now gets to delegagte to a changed foo because its a live link.
+   *Delegation is more powerful than classes because we can implement class in delegation but not the opposite.
+	
+	Tradeoff
+	Shadowing is an issue.
+	Everything is public.
+	
+Q.  Module pattern vs Delegation pattern?(Example below )
+A.	While using module pattern, where we want to make things private we loose the ability of delegation. As the fucntionalities will be in 
+	different scopes so to delegagte to those fucntionalities will be cut off. We can do the .call(this) stuff but then still crappy syntax same as class pattern.
+
+---------------------------------------------------------//Module pattern-------------------------------------------------------------------------------
+	Widget = (function(){
+		return({
+			init:function(){},
+			set:function(){}
+		})
+	})(); properties are private using IIFE  
+	
+	var Button = (function(){
+	
+		var publicAPI ={};
+
+		publicAPI.setup= function(){
+				this.init();       //delegation to the method ot property init is not possible because and it's in totally different closure.
+		};                    'this' refer to the Button itself and init is not on the Button object and it can not delegagte up because of scope restriction.
+								So this is the drawback of the module as the ability to delegagte an object is lost
+		publicAPI.build = function(){};
+		
+		return publicAPI;
+	
+	})();
+	
+--------------------------------/Delegation Pattern -----------------------------------------------------------------------
+-->	var Widget ={
+		
+			init:function(){},
+			set:function(){}
+	
+	};
+	
+-->	var Button = Object.create(Widget);
+	Button.setup = function(){
+		this.init();              //delegation to the method ot property init is possible because of prototype linkage.
+	};
+	Button.build = function(){
+		this.set();              //delegation to the method ot property set is possible because of prototype linkage.
+	};
+	
+-->	var btn1 = Object.create(Button);
+	btn1.build();
+		
+	
+	})();
+	btn1 --> Button --> Widget.    (delegation between objects.)
+	
+	
+-----------------------------------------------------------------CallBacks ----------------------------------------------------------------------------
+
+
+
+	
+--------------------------------------------------------------------Promises----------------------------------------------------------------------------
+
+Promise defintion--
+
+.then method --- > it's a polymorphic fucntion that changes it behaviour depending upon what is returned by hte promise 
+
+
+	
+	
+
+-------------------------------------------------------Generator-------------------------------------------------------
+1. yield stops the task and it return an object {value: , done:false} if there is some value then it will return and done property is false till the whole generator 
+   function is completed executing.
+   
+		function getData(x){
+			setTimeout(function(){var c = it.next(x);},2000);
+		}
+
+		function* gen(){
+				var a = 10+ (yield getData(1));
+				console.log("resumed");
+				var b = 20 + (yield getData(2));
+				console.log("resumed");
+				var op =(yield getData(a+b));
+				console.log(op);
+		};
+
+		var it = gen();   //Calling generator function creates or return an iterator and the function it not executed till now.
+		it.next();        // Now the function is executed for the first time. 
+		
+
+2 . To start and resume the generator we need some external call for it.next(some_value), some_value passed will go and sit in the place of yield keyword and resumes the function.
+
+3. 	Yield pause the function and return and object {value:, done:} if any value is present when the yield is first encountered it is return in the value property.
+    But if we called some function after yield keyword it will just return value property as undefined.
+	
+4. Accessing the the value property returned object ==> it.next().value;
+
+ 
+-------------------------------Creating an Iterator for objects, manually or by using generators-------------------------------------
+** Array has inbuilt iterator so we when call an array it return all the values present at all the indexes.
+
+** But object does not have but we can create an object with iterator manually or using generators.
+
+** Values returned from an iteratable object needs to be stored in an array or passed inside a function's parameter.
+
+** "..." operator at the backend runs the "for of" loop which has a " .next()" method 
+   so in the  " for(var v of array or obj or obj.[Symbol.iterator]()){console.log(v)}" uses the passed iteratable array or 
+   object and apply .next() method to iterate through the whole iteratable item. 
+
+
+1. Manually
+Point -- Computed properties and function are surrounded by [].
+		
+		var obj={
+				[Symbol.iterator]()
+				{
+					var index =this.start , en = this.end;
+						
+					var it= {
+								next : function()
+								{
+									if(index<= en)
+									{
+										var value = obj.values[index];
+										index++;
+										return {value , done:false};
+										
+									}
+									else
+									{
+										return{done: true};
+									}
+								}
+						
+							}
+							
+					return it ;
+				},
+				values:[0,10,20,30,40,50,60,70,80,90,100,11],
+				start : 0,
+				end : 10
+				
+			}
+
+			var val = [...obj];
+
+
+
+Point-- Computed properties and function are surrounded by [].
+
+2. Using Generator
+		var obj={
+			*[Symbol.iterator](){                                  //Computed concise function. 
+					for(var i= this.start; i<=this.end; i++)
+					{
+						yield this.values[i];
+					}
+				},
+			values:[0,10,20,30,40,50,60,70,80,90,100,11],
+			start : 0,
+			end : 10
+		}
+		
+		var val = [...obj];
+
+
+
+
+How to create an array of a sequential numbers by using ...operator. [...3] --> 0-3, [...5]--> 0 to 5
+
+
+Number.prototype[Symbol.iterator]= function*(){
+	for(var i = 0 ; i <= this; i++)
+	{
+			yield i ;
+	}
+
+}
+[...8]  // 1 to 8
+
+
+------------------------------------------------Parallelism vs concurrency -----------------------------------------------------
+** two task running simultaneously is parallel task, kind of running of different core.
+** two task running in same time frame on the same core is concurrency.
+ 
+
+------------------List Operations-------------------
+1.filter() calls a provided callback function once for each element in an array, and constructs a new array of all 
+the values for which callback returns a value that coerces to true. callback is invoked only for indexes of the array 
+which have assigned values; 
+it is not invoked for indexes which have been deleted or which have never been assigned values.
+
+** filter method returns an array.
+
+
+		filter utility method 
+
+		function run(x){
+			return (x<=3);
+		}
+
+		var arr =[1,2,3,4];
+		var arr1 = arr.filter(item=>item <= 3)
+		var arr1 = arr.filter(function (item){run(item)));
+
+
+		inside filter a manually created filter method -->
+
+			var arr = [1,2,3,4,5,6,7];
+			
+			function run(x){
+				return (x<=2);
+			}
+			
+			function myfilter(array, fun){
+				
+				var arr1=[];
+				for(var i=0;i<array.length; i++)
+				{
+					if(fun(array[i])){
+						arr1.push(array[i]);
+					}
+					
+				}
+				return arr1;
+				
+			}
+			var arr2 = myfilter(arr, run);
+			var arr3 = myfilter(arr, item=>item<=4);  //using arrow function
+			var arr4 = myfilter(arr, function(item){ return (item<=3);}) // anonymous function;
+
+
+2.  Reduce 
+
+	var arr = [1,2,3,4,5];
+	
+    function add(val1,val2){
+		return  val1*val2;
+	}
+	
+	function myreduce(array,fun,initialValue){
+		var result = initialValue;
+		for(var i = 0 ; i < array.length; i++)
+		{
+        	result = fun(result,array[i]);
+		}
+        return result;
+	}
+	var a  = myreduce(arr,add,0);
+	console.log(a);
+	
+---------------------------------------------------------------Async/await--------------------------------------------------------------------
+
+function getData(url){	
+  return new Promise(function run(resolve,reject){
+  	setTimeout(()=>{
+    	if(url !== undefined)
+        {
+        	resolve({name:"Karan"})
+        }
+        else{
+        	reject("Error")
+        }
+    },3000)
+  })
+  
+  }
+        
+async function run(){
+	var data = await getData('google');
+	console.log(data);   
+    console.log("Fetch Done");
+    
+}
+
+	
