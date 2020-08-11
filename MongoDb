@@ -1,0 +1,269 @@
+
+CRUD --Commands of MongoDB
+
+inserted data is of type "Bson" and "not Json"
+MongoDb convert Json To Bson data(Binary Json) Bson is a bigger set of Json. everyting is bson is json 
+Read here -->(mongodb.com/json-and-bson)
+
+Create --> 
+1.run mongo.exe file inisde bin folder
+2.show dbs --(show all the database).
+3.use students--> switched to db students will appear.
+4. show dbs --> students will not show you as no data is there.
+5. db.studentData.insertOne({"name":"karan", "email":"karanattri05@gmail.com","age":25 }). and enter
+   or db.studentData.insertOne({name:"Karan", email:"karanattri05@gmail.com"})
+
+6. db server will return --> acknowledged: true and inserted Id : objectId{""}
+7. to check the inserted data go to step 8
+8. db.studentData.find() --> will give all the data in the Student collection
+9. or to get a better readable data use command
+	db.studentData.find().pretty()
+10.
+
+Read -->
+1.db.studentData.find().pretty()
+2.db.studentData.findOne() --> will find the first result in the collection
+
+Update-->
+1.db.studentData.updateOne({id:""},{$set:{properties to change add}})
+2.db.studentData.updateMany({},{$set:{}}) --> will update all the documents inside the collection with the $set object.
+3.db.studentData.update({id:""},{properties}) --> if we will not use $set as used above then in that case will update the whole document
+  with the mentioned id inside the collection with the properties provided inisde other object parameter.
+4.db.studentData.updateMany({},{$set:{}})
+5.db.studentData.update({id:{$gt:2}},{$set:{property:"value"}})
+To set the value of the price field in all documents containing the embedded document carrier whose fee field value is greater than 2, 
+specify the multi:true option in the update() method:
+
+db.inventory.update(
+   { "carrier.fee": { $gt: 2 } },
+   { $set: { price: 9.99 } },
+   { multi: true }
+)
+
+
+
+Delete-->
+1.db.studentData.deleteOne({id,name or unique property})
+2.db.studentData.deleteOne({}) --> will delete the top record in the collection.
+2.db.studentData.deleteMany({})--> delete all the documents
+
+26/April/2020
+Steps to perform a filter at db server instead of fetching all the data and then filtering
+
+Earlier, we were using this command mentioned below in the power shelll or command prompt-:
+1. db.studentData.find().pretty() --> this will fetch all the data from the db
+
+Cost increasing in terms of bandwidth.
+2. db.studentData.find().forEach((student)=>{printjson(student.name or other properties) })-->this will also fetch all the data(cursor) from the db and the filter will be applied later on on the fetched data(cursor).
+
+Cost reducing in terms of bandwidth.
+3. db.studentData.find({},{name:1 , _id:0}) --> This will fetch filtered data. The properties in the second curly braces will be set to 1 will be fetched and those with 0 will not be.
+NOTE : The first parameter here set the where clause. like where id =something or name=something etc.
+	 :Criteria on which we will select the document--> The first parameter
+ 
+4. also we can convert it to an array --> db.studentData.find({},{name:1, _id:0}).toArray() second parameter passed in the find is like the select statement in mongodb.
+ 
+ 
+How to store an object inside a key/property of document.
+
+1. db.studentData.updateMany({},{$set:{address:{city:"", state:"", country:""}}})
+				  updateOne,insertOne,insertMany etc
+this will do the work 
+HOw to acess the address property--> db.studentData.find({},{"address.city"})
+
+How to insert an array to a key/property in the document
+2. db.studentData.updateMany({},{$set:{workingdays:["Monday","tuesday","wednesday","thursday"]}})
+                  updateOne,insertOne,insertMany
+this will do the work.
+How to access-->
+db.studentData.findOne().workingdays will fetch all the days
+or
+db.studentData.findOne({name:"Karan"}).working or working[index of the array]
+
+-----------------------------------------------------------------Relationships in MongoDB ---------------------------------------------------------------------
+
+One To One -----------------
+Ex-->
+object 1 has a one to onerelation with object 2
+Object 1 ={
+        "_id" : ObjectId("5ea966a037e4a3f1ca094dc7"),
+        "productName" : "Book",
+        "cost" : 200,
+        "title" : "My Book"
+}
+Object 2 = {
+        "_id" : ObjectId("5ea968c437e4a3f1ca094dc8"),
+        "name" : "Karan",
+        "address" : {
+                "city" : "Chandigarh",
+                "state" : "U.T.",
+                "country" : "India"
+        },
+        "purchaseHistory" : {
+                "productId" : ObjectId("5ea966a037e4a3f1ca094dc7"),
+                "purchaseDate" : "1-2-2020",
+                "amountPaid" : 150,
+                "discount" : "25%"
+        }
+}
+
+> db.customerDetail.find({"purchaseHistory.productId":ObjectId("5ea966a037e4a3f1ca094dc7")},{_id:0, name:0,address:0}).pretty()
+{
+        "purchaseHistory" : {
+                "productId" : ObjectId("5ea966a037e4a3f1ca094dc7"),
+                "purchaseDate" : "1-2-2020",
+                "amountPaid" : 150,
+                "discount" : "25%"
+        }
+}
+One To Many------------------
+
+object 3 has ont to many relation i.e. with object 1 and object 2
+Object 1 ={
+        "_id" : ObjectId("5ea966a037e4a3f1ca094dc7"),
+        "productName" : "Book",
+        "cost" : 200,
+        "title" : "My Book"
+}
+Object 2 ={
+        "_id" : ObjectId("5ea966a037e4a3f1ca094dc5"),
+        "productName" : "Book",
+        "cost" : 200,
+        "title" : "His Book"
+}
+Object 3 = {
+        "_id" : ObjectId("5ea968c437e4a3f1ca094dc8"),
+        "name" : "Karan",
+        "address" : {
+                "city" : "Chandigarh",
+                "state" : "U.T.",
+                "country" : "India"
+        },
+        "purchaseHistory" :[ 
+								{
+										"productId" : ObjectId("5ea966a037e4a3f1ca094dc7"),
+										"purchaseDate" : "1-2-2020",
+										"amountPaid" : 150,
+										"discount" : "25%"
+								},
+								{
+										"productId" : ObjectId("5ea966a037e4a3f1ca094dc5"),
+										"purchaseDate" : "1-2-2020",
+										"amountPaid" : 150,
+										"discount" : "25%"
+								}
+							]
+}
+
+
+Many To One ----------------
+1. It is samething many objects (obj1, obj2 ) has relation to one (obj 3) as in above case.
+
+
+
+Many To Many-----------------(one book can be bought by many persons, and similarlly one person can buy many book)
+1. book1 bought by (person A,B,C,D, E).
+2. person A bought( book b1,b2,b3,b4,b5).
+
+
+
+RENAME--> 
+1. to rename a field in a document use $rename db.students.updateMany( {}    , { $rename: { "nmae": "name" } } ,
+                                               db.students.update({_id: 1}, { $rename: { "name.first": "name.fname" } } )
+2. To rename a collection use -->  db.collection_name.renameCollection("new Collection Name")
+
+
+------------------------------------------------------------------Drop a Collection------------------------------------------------------------------------------ 
+
+1. db.COLLECTION_NAME.drop()  
+
+
+
+ 
+--------------------------------------------------------Connecting mondgoDb using mongoose-----------------------------------------------------------------------
+
+1. Install mongoose, nodemon, mocha.
+2. const mongoose = require('mongoose');
+3. mongoose.connect('mongodb://localhost/dbname',{useNewUrlParser:true});---> to connect and create a db.
+4. mongoose.connection.once("open",()=>{clg('connection done')}).on("error",(error)=>{clg(error)}).
+
+------------------------------------------------------------------How to define Schema ---------------------------------------------------------------------------------------
+
+1. const mongoose = require('mongoose'); call mongoose
+2. const Schema = mongoose.Schema;       call Schema which is part of mongoose
+3. const StudentSchema = new Schema({
+	name : String 
+ });                                     Create a Schema and suffix it with Schema.
+ 
+4. const Student = mongoose.model('student'(collection name),StudentSchema); 
+5. module.exports = Student;
+
+
+-----------------------------------------------------------------   INDEXING  -----------------------------------------------------------------------------------
+`1. Index Names
+   The default name for an index is the concatenation of the indexed keys and each key’s direction in the index ( i.e. 1 or -1) using underscores 
+   as a separator. For example, an index created on { item : 1, quantity: -1 } has the name item_1_quantity_-1.
+
+ 2.  You can create indexes with a custom name, such as one that is more human-readable than the default.
+    For example, consider an application that frequently queries the products collection to populate data on existing inventory. 
+	The following createIndex() method creates an index on item and quantity named query for inventory:
+	db.products.createIndex(
+	{ item: 1, quantity: -1 } ,
+	{ name: "query for inventory" }
+	)
+ 3. You can view index names using the db.collection.getIndexes() method. 
+ 4. You cannot rename an index once created. Instead, you must drop and re-create the index with a new name.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+{
+        "_id" : ObjectId("5ea3fd3155b77f9d7774da13"),
+        "name" : "Karan",
+        "email" : "karanattri@gmail.com",
+        "age" : 25,
+        "location" : "Chandigarh"
+},
+{
+        "_id" : ObjectId("5ea3fdee55b77f9d7774da15"),
+        "name" : "Gunjan",
+        "email" : "gunjan@gmail.com",
+        "age" : 28,
+        "location" : "Chandigarh"
+},
+{
+        "_id" : ObjectId("5ea3fdee55b77f9d7774da16"),
+        "name" : "Harjit",
+        "email" : "harrry@gmail.com",
+        "age" : 27,
+        "location" : "Chandigarh"
+},
+{
+        "_id" : ObjectId("5ea3fe2e55b77f9d7774da17"),
+        "name" : "Harjot",
+        "email" : "harjotSingh@gmail.com",
+        "age" : 25,
+        "location" : "Chandigarh"
+}
