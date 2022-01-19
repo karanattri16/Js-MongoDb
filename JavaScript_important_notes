@@ -355,7 +355,7 @@ A. 	1. a brand new empty obj created
 Q1. Was the func called with `new` ?
 a-- use that object. new keyword overrides the other 3 rules acc to precedent of the rules.
 
-Q2  was the func called with call or apply ?
+Q2  was the func called with call or apply ?  https://medium.com/@omergoldberg/javascript-call-apply-and-bind-e5c27301f7bb
 a- use that object (explicit binding)
 
 Q3 was the function called via a containing /owning object?
