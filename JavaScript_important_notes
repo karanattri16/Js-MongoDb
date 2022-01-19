@@ -365,6 +365,12 @@ Q4 default - global object {except strict mode}?
 
 
 Arrow function and THIS' binding ?
+** Does not have its own bindings to this or super, and should not be used as methods.
+** Does not have new.target keyword.
+** Not suitable for call, apply and bind methods, which generally rely on establishing a scope.
+** Can not be used as constructors.
+** Can not use yield, within its body.
+
 Arrow functions does not remember it's own "THIS" meaning the object that called or invoked the arrow fucntion.
 So it goes one up in the lexical scope and finds the next "THIS"
 i.e. the "object" that invokes a function which then invokes the arrow function and points this to that "object". 
@@ -454,7 +460,7 @@ var obj={
 var obj1={
 	foo1 : obj.foo()      foo1 is not a function property now, here we invoked obj.foo() using obj1.foo1;, 
 	}				      this got in the arrow function and now "this" points to obj in actual but arrow function
-					      does not remember it's own this and hence "this" here points to the obj1, one up in the lexical scope;
+					      does not remember it's own this and hence "this" here points to the window, one up in the lexical scope;
 
 
 obj1.foo1;   
