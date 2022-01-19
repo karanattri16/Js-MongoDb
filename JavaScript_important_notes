@@ -465,6 +465,35 @@ var obj1={
 
 obj1.foo1;   
 
+-------------------
+Case 5 -:
+
+const obj ={
+  id:10,					// using one function decalaration with function keyword is important to 
+  a:function(){                                 // access the 'this' keyword in the function place.
+      return ()=>console.log(this)
+      
+    }
+}
+
+const objB = {
+  b:obj.a
+}
+
+objB.b()();                                 this points to one up in the lexical scope i.e. objB
+
+-----------
+Case 6-:
+const obj ={
+  id:10,
+  a:function(){
+      return()=>console.log(this)
+      
+    }
+  
+}
+
+obj.a()();   this points to one up in the lexical scope i.e. obj 
 
 ---------------------------------------------------------CLOSURES---------------------------------------------------------------------------------------------
 
