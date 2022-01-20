@@ -986,5 +986,37 @@ async function run(){
     console.log("Fetch Done");
     
 }
+------------------------------------------------------------------------------------------------------------------------------------------------------------
+const debounce=(cb)=>{
+  let timer;
+  return function(){
+    if(timer){
+    clearTimeout(timer);}
+    timer= setTimeout(cb, 2000);
+  }
+}
+
+const a = debounce(function() {console.log("ran after 2 sec")});
+a();
+a();
+
+
+const thorttle=(cb,delay)=>{
+  let last=0;
+  return function(){
+    let now = new Date().getTime();
+    if(now-last<delay){
+      return
+    }
+    last = now;
+    
+     return cb();
+  }
+}
+
+const b = thorttle(function() {console.log("throttle after 1s")},0.5);
+b();
+b();
+
 
 	
